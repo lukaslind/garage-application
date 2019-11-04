@@ -1,0 +1,1316 @@
+////calculate money--time and wash + ge ett slumpig nummer för att kunna ta fordonet ut 
+
+////when entering a car show it and ask if it is right 
+////show last added car 
+////enum to replace numbers
+
+//printf
+//int **vecP; -> 	vecP = new (nothrow) Vehicle *[userSize];  dynamic memory ... men rekommendrerar inte den
+//((x>=i)? x=i : i=x );
+//686 addTestVehicle
+
+
+
+#include <new>
+#include "pch.h"
+#include <iostream>
+#include <cstdlib>
+#include <stdlib.h> //includes sleep
+#include <windows.h>
+#include <string>
+#include <array>
+using namespace std;
+enum colorluk { white = 100, red, yellow, black };                    /////// setting
+enum options                                                         ////// information/variables to use in the program
+{
+	E_WrongInput = 666, E_AddVeh = 1, E_ShowGarage, E_showAllVehicle, E_showAllVehicleNEW, E_showVehicleBy/*, E_FindVeh*/, E_SearchRemovVec, E_Exit
+};
+enum vehicleEnum
+{
+	E_Bicycle = 1, E_Motorcycle, E_Car, E_Bus, E_Truck, E_Submarine
+};
+enum anotherOrders
+{
+	E_color = 1, E_numOfWheels, E_typeOfVec
+};
+enum Mylistor
+{
+	E_MainList, E_AddVecList, E_ShowVecList
+};
+enum Boolesk
+{
+	E_yes = 1, E_no
+};
+
+
+////////////////Vehicle
+class Vehicle
+{
+protected:                              // exclusive of vehicle
+	string Owner, Model, RegNum, Color;       
+	int NumOfWheels, TypeOfV;
+	///////insurance får inte komma in	
+public:                                           //all the classes that inherit from vehicle will have this 
+	Vehicle(string owner, string model, string regNum, string color, int numOfWheels, int typeOfV)
+		: Owner(owner), Model(model), RegNum(regNum), Color(color), NumOfWheels(numOfWheels), TypeOfV(typeOfV) {};
+
+	virtual void printVehicle() = 0;
+	int  get_typeOfV() { return this->TypeOfV; };
+	int get_numOfWheels() { return this->NumOfWheels; };
+	string get_regNum() { return this->RegNum; };
+	string get_color() { return this->Color; };
+	//void set_tov() { TypeOfV = 9; };
+
+
+};
+
+/////////////////////////       1
+class Bicycle : public Vehicle
+{
+private:                      // exclusive of bicycle
+	bool SupportWheels, Tandem;
+public:
+	Bicycle(string owner, string model, string regNum, string color, int  numOfWheels, bool supportWheels, bool tandem)
+		: Vehicle(owner, model, regNum, color, numOfWheels, 1), SupportWheels(supportWheels), Tandem(tandem) {};
+
+	void printVehicle()    // show information of bicycle
+	{
+		cout << "Bicycle owner: " << Owner << ", Model: " << Model << ", Reg number: " << RegNum
+			<< ", Color: " << Color << ", wheels: " << NumOfWheels << "\n"
+			<< ((SupportWheels) ? "   It has supporting wheels" : "   It doesn't have supporting wheel")
+			<< (((SupportWheels && Tandem) || (!SupportWheels && !Tandem)) ? " and " : " but ")
+			<< ((Tandem) ? "is tandem.\n" : "is not tandem.\n") << endl;
+	};
+};
+/////////////////////////       2
+class Motorcycle : public Vehicle
+{
+private:
+	bool Sidecar, Windshield;     // exclusive of motorcycle
+public:
+	Motorcycle(string owner, string model, string regNum, string color, int numOfWheels, bool sidecar, bool windshield)
+		: Vehicle(owner, model, regNum, color, numOfWheels, 2), Sidecar(sidecar), Windshield(windshield) {};
+
+	void printVehicle()            // show information of motorcycle
+	{
+		cout << "Motorcycle owner: " << Owner << ", Model: " << Model << ", Reg number: " << RegNum
+			<< ", Color: " << Color << ", wheels: " << NumOfWheels << "\n"
+			<< ((Sidecar) ? "   It has a sidecar" : "   It doesn't have a sidecar")
+			<< (((Sidecar && Windshield) || (!Sidecar && !Windshield)) ? " and " : " but ")
+			<< ((Windshield) ? "has windshield.\n" : "doesn't have windshield.\n") << endl;
+	};
+
+};
+/////////////////////////       3
+class Car : public Vehicle
+{
+private:                             // exclusive of car
+	int NumOfDoors;
+	bool Gps;
+public:
+	Car(string owner, string model, string regNum, string color, int numOfWheels, int numOfDoors, bool gps)
+		: Vehicle(owner, model, regNum, color, numOfWheels, 3), NumOfDoors(numOfDoors), Gps(gps) {};
+
+	void printVehicle()                  // show information of car
+	{
+		cout << "Car owner: " << Owner << ", Model: " << Model << ", Reg number: " << RegNum
+			<< ", Color: " << Color << ", wheels: " << NumOfWheels << "\n"
+			<< "   It has " << NumOfDoors << " doors"
+			<< ((Gps) ? " and has Gps.\n" : " and doesn't have Gps.\n") << endl;
+	};
+
+};
+/////////////////////////       4
+class Bus : public Vehicle
+{                                              // exclusive of bus
+	int NumOfChairs;
+	bool DoubleDecker;
+public:
+	Bus(string owner, string model, string regNum, string color, int numOfWheels, int numOfChairs, bool doubleDecker)
+		: Vehicle(owner, model, regNum, color, numOfWheels, 4), NumOfChairs(numOfChairs), DoubleDecker(doubleDecker) {};
+
+	void printVehicle()                // show information of bus
+	{
+		cout << "Bus owner: " << Owner << ", Model: " << Model << ", Reg number: " << RegNum
+			<< ", Color: " << Color << ", wheels: " << NumOfWheels << "\n"
+			<< "   It has " << NumOfChairs << " chairs"
+			<< ((DoubleDecker) ? " and is double-decker.\n" : " and is not double-decker.\n") << endl;
+	};
+
+};
+/////////////////////////       5
+class Truck : public Vehicle
+{
+private:                            // exclusive of truck
+	bool IsLoaded, WithCrane;
+
+public:
+	Truck(string owner, string model, string regNum, string color, int numOfWheels, bool isLoaded, bool withCrane)
+		: Vehicle(owner, model, regNum, color, numOfWheels, 5), IsLoaded(isLoaded), WithCrane(withCrane) {};
+
+	void printVehicle()               // show information of truck
+	{
+		cout << "Truck owner: " << Owner << ", Model: " << Model << ", Reg number: " << RegNum
+			<< ", Color: " << Color << ", wheels: " << NumOfWheels << "\n"
+			<< ((WithCrane) ? "   It has a crane" : "   It doesn't have a crane")
+			<< (((WithCrane && IsLoaded) || (!WithCrane && !IsLoaded)) ? " and " : " but ")
+			<< ((IsLoaded) ? "is loaded.\n" : "is not loaded.\n") << endl;
+	};
+
+};
+/////////////////////////       6
+class Submarine : public Vehicle                   // extra class we did not use for the lack of time
+{
+private:
+	bool IsLoaded, IsRussian;
+
+public:
+	Submarine(bool isLoaded, bool isRussian)
+		: Vehicle("Unknown", "Unknown", "Unknown", "Unknown", 0, 6), IsLoaded(isLoaded), IsRussian(isRussian) {};
+	////if(Isloaded||Isrussian)
+	////	cout <<"not allowed";
+	void printVehicle()
+	{
+		cout << "Submarine owner: " << Owner << ", Model: " << Model << ", Reg number: " << RegNum
+			<< ", Color: " << Color << ", wheels: " << NumOfWheels << "\n"
+			<< ((IsLoaded) ? "   It is loaded" : "It's not loaded")
+			<< (((IsLoaded && IsRussian) || (!IsLoaded && !IsRussian)) ? " and " : " but ")
+			<< ((IsLoaded) ? "is RussiaAaAaAaAaAaAn.\n" : "is not Russian.\n") << endl;
+	};
+
+};
+
+
+
+/////garage//////////garage//////////garage//////////garage//////////garage//////////garage//////////garage//////////garage//////////garage//////////garage//////////garage//////////garage/////
+
+class Garage
+{
+protected:
+
+	bool match;
+	int Vehiclecounter = 0;
+	int TempCounter[6] = { 0,0,0,0,0,0 };
+	/*
+	static const int GarageCapacity = 12;
+	bool Places[GarageCapacity];
+	Vehicle * vecP[GarageCapacity];
+	*/
+
+	bool *Places;
+	Vehicle **vecP;
+	int userSize;
+	string tempString;
+	int tempInt, j;
+public:
+	void setAllRight()
+	{                                           // dynamic memory for number of parking lots
+		vecP = new (nothrow) Vehicle *[userSize];
+		Places = new (nothrow) bool[userSize];
+		for (int i = 0; i < userSize; i++)
+		{
+			Places[i] = false;
+		}
+	};
+	void set_userSize(int usersize)
+	{
+		userSize = usersize;
+	};
+	void deletePointerz()
+	{
+		delete Places;
+		delete vecP;
+	};
+	void numberOfPlacesLeft()
+	{
+		if (Vehiclecounter == 0)
+			cout << "The garage is empty\n";
+		else
+			printf(((userSize - Vehiclecounter == 1) ? "there is %i place left\n" : "there are %i places left\n"), userSize - Vehiclecounter);
+	};
+	//addera fordon metod
+	void addVehicle(Vehicle * newVehicle)
+	{
+		if (Vehiclecounter < userSize)
+		{
+			match = false;
+
+			for (int i = 0; i < userSize; i++)
+			{
+				if (Places[i])
+				{
+					if (vecP[i]->get_regNum() == newVehicle->get_regNum())
+					{
+
+						cout << "The vehicle is already in the garage.\n";
+						match = true;
+					}
+				}
+			}
+			if (!match)
+			{
+				j = -1;
+				//using do while to avoid break in for-loop;
+				do
+				{
+
+					tempInt = ++j;
+				} while (Places[j] == true);
+
+				/*for (int i = 0; i < userSize; i++)
+				{
+					if (!Places[i])
+					{
+						j = i;
+						break;
+					}
+
+				}*/
+				Places[j] = true;
+				vecP[j] = newVehicle;
+				cout << "\nThe vehicle was successfully added.\n";
+				/*vecP[Vehiclecounter]->printVehicle();*/
+				Vehiclecounter++;
+			}
+		}
+		else
+			cout << "\tThe garage is full, sorry \n\n";
+	};
+	void listVehicles(int x = 0)           // show the list of vehicles added
+	{////varje nummer till nåt ... antal dörrar eller nåt annan
+		if (Vehiclecounter > 0)
+		{
+			match = false;
+
+			switch (x)
+			{
+			case 0:
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+						cout << i + 1 << "- ";
+						vecP[i]->printVehicle();
+					}
+
+				}
+				break;
+			case E_Bicycle:
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+						if (vecP[i]->get_typeOfV() == E_Bicycle) {
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+
+				}
+				if (!match)
+					cout << "There are no bikes in the garage!!\n";
+				break;
+			case E_Motorcycle:
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+						if (vecP[i]->get_typeOfV() == E_Motorcycle) {
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+
+				}
+				if (!match)
+					cout << "There are no motorcycle in the garage!!\n";
+				break;
+			case E_Car:
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+						if (vecP[i]->get_typeOfV() == E_Car) {
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+
+				}
+				if (!match)
+					cout << "There are no cars in the garage!!\n";
+				break;
+			case E_Bus:
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+						if (vecP[i]->get_typeOfV() == E_Bus) {
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+
+				}
+				if (!match)
+					cout << "There are no busses in the garage!!\n";
+				break;
+			case E_Truck:
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+						if (vecP[i]->get_typeOfV() == E_Truck) {
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+
+				}
+				if (!match)
+					cout << "There are no trucks in the garage!!\n";
+				break;
+			case E_Submarine:
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+						if (vecP[i]->get_typeOfV() == E_Submarine) {
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+
+				}
+				if (!match)
+					cout << "There are no submarines in the garage!!\n";
+				break;
+
+			default:
+				cout << "wrong input\n\n";
+				break;
+			}
+		}
+		else
+			cout << "The garage is empty!!\n";
+
+	};
+	void listVehicles(int x, string wordToLook)    // show list of vehicles by the search of the word
+	{
+		if (x == E_color)
+		{
+
+			if (Vehiclecounter > 0)
+			{
+				match = false;
+
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+
+						if (vecP[i]->get_color() == wordToLook) {
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+				}
+				if (!match)
+					cout << "There are no " << wordToLook << " vehicles in the garage!!\n";
+
+			}
+			else
+				cout << "The garage is empty!!\n";
+		}
+		else
+			cout << "You are using this function in the wrong way\n\n";
+
+	};
+	void listVehicles(int x, int numToLook)            // show the list of vehicles by the search of the number of wheels
+	{
+		if (x == E_numOfWheels)
+		{
+
+			if (Vehiclecounter > 0)
+			{
+				match = false;
+
+				for (int i = 0; i < userSize; i++)
+				{
+					if (Places[i])
+					{
+
+						if (vecP[i]->get_numOfWheels() == numToLook)
+						{
+							vecP[i]->printVehicle();
+							match = true;
+						}
+					}
+				}
+				if (!match)
+					cout << "There are no vehicles with " << numToLook << " wheels in the garage!!\n";
+			}
+			else
+				cout << "The garage is empty!!\n";
+		}
+		else
+			cout << "you are using this function in wrong way\n\n";
+	};
+
+
+	void ListTypeOfVehicles()             // show the list by the type of vehicles
+	{
+		if (Vehiclecounter > 0)
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				TempCounter[i] = 0;
+				for (int ii = 0; ii < userSize; ii++)
+				{
+					if (Places[ii])
+					{
+
+						if (vecP[ii]->get_typeOfV() == i + 1)
+						{
+							TempCounter[i]++;
+						}
+					}
+				}
+			}
+			if (TempCounter[0] != 0)
+				printf(((TempCounter[0] == 1) ? "There is %i bike\n" : "There are %i bikes\n"), TempCounter[0]);
+			if (TempCounter[1] != 0)
+				printf(((TempCounter[1] == 1) ? "There is %i motorcyle\n" : "There are %i motorcyles\n"), TempCounter[1]);
+			if (TempCounter[2] != 0)
+				printf(((TempCounter[2] == 1) ? "There are %i car\n" : "There are %i cars\n"), TempCounter[2]);
+			if (TempCounter[3] != 0)
+				printf(((TempCounter[3] == 1) ? "There are %i buse\n" : "There are %i buses\n"), TempCounter[3]);
+			if (TempCounter[4] != 0)
+				printf(((TempCounter[4] == 1) ? "There are %i truck\n" : "There are %i trucks\n"), TempCounter[4]);
+			if (TempCounter[5] != 0)
+				printf(((TempCounter[5] == 1) ? "There are %i submarine\n\n" : "There are %i submarines\n\n"), TempCounter[5]);
+			printf(((userSize - Vehiclecounter == 1) ? "there is %i place left\n" : "there are %i places left\n"), userSize - Vehiclecounter);
+		}
+		else
+			cout << "The garage is empty!!\n";
+	};
+	void listTypeOfVecNEW()
+	{
+		if (Vehiclecounter > 0)
+		{
+			for (int i = 0; i < 6; i++)
+				TempCounter[i] = 0;
+
+			for (int i = 0; i < userSize; i++)
+			{
+
+				if (Places[i])
+				{
+					cout << i + 1 << "-";
+					switch (vecP[i]->get_typeOfV())
+					{
+					case 1:
+						cout << " Bicycle, Reg Number: " << vecP[i]->get_regNum() << endl;
+						break;
+					case 2:
+						cout << " MotorCycle, Reg Number: " << vecP[i]->get_regNum() << endl;
+						break;
+					case 3:
+						cout << " Car, Reg Number: " << vecP[i]->get_regNum() << endl;
+						break;
+					case 4:
+						cout << " Bus, Reg Number: " << vecP[i]->get_regNum() << endl;
+						break;
+					case 5:
+						cout << " Truck, Reg Number: " << vecP[i]->get_regNum() << endl;
+						break;
+
+					default:
+						break;
+					};
+				}
+				else
+				{
+					cout << i + 1 << "-";
+					cout << " Empty\n";
+				}
+			}
+
+		}
+		else
+			cout << "The garage is empty!!\n";
+	};
+	bool findByRegNum(string regnumToFind)              // find vehicle by the registration number
+	{
+
+		if (Vehiclecounter > 0)
+		{
+			match = false;
+
+			for (int i = 0; i < userSize; i++)
+			{
+				if (Places[i])
+				{
+
+					if (vecP[i]->get_regNum() == regnumToFind) {
+						//vecP[i]->printVehicle();
+						cout << "Your vehicle has been found.\n";
+						match = true;
+						return true;
+					}
+				}
+			}
+			if (!match)
+			{
+				cout << "There are no vehicles with regnumber  \"" << regnumToFind << "\" \n";
+				return false;
+			}
+
+		}
+		else
+		{
+			cout << "The garage is empty!!\n";
+			return false;
+		}
+		return false;
+	};
+	void RemoveVehicle(string regNumToRemove)     // remove vehicle from the program
+	{
+
+		if (Vehiclecounter > 0)
+		{
+			match = false;
+
+			for (int i = 0; i < userSize; i++)
+			{
+				if (Places[i])
+				{
+					if (vecP[i]->get_regNum() == regNumToRemove)
+					{
+						delete vecP[i];
+						Places[i] = false;
+						Vehiclecounter--;
+						match = true;
+						cout << "The vehicle has been removed.\n";
+					}
+				}
+
+			}
+			if (!match)
+			{
+				cout << "There are no vehicles with regnumber  \"" << regNumToRemove << "\" \n";
+			}
+
+		}
+		else
+			cout << "The garage is empty!!\n";
+	};
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////listor//////////listor//////////listor//////////listor//////////listor//////////listor//////////listor//////////listor//////////listor//////////listor//////////listor//////////listor/////
+
+class listor
+{
+private:
+	Garage garage;
+	Vehicle * VehicleP;
+	string userInputString;
+	int userInputInt;
+	string MyTempString;
+	bool accepted;
+	bool whileToGo = true;        // to make the program running or not
+	////////temp variabel
+	string  ownerl, colorl, modell, regnuml, garageName;
+	int numOfwheelsl, numofseatsl, numofdoorsl;
+	bool tempBool1, tempBool2;
+public:
+	void addTestVehicle()//bara för att prova programmet, använs inte i release läge
+	{
+		VehicleP = new Bicycle("1", "bmx1", "1231", "white1", 2, true, false);
+		garage.addVehicle(VehicleP);
+		VehicleP = new Bus("4", "bmx4", "1234", "white4", 4, 33, true);
+		garage.addVehicle(VehicleP);
+		VehicleP = new Motorcycle("3", "bmx3", "1233", "white3", 4, false, false);
+		garage.addVehicle(VehicleP);
+		VehicleP = new Bicycle("2", "bmx2", "1232", "white2", 2, false, true);
+		garage.addVehicle(VehicleP);
+		VehicleP = new Bus("5", "bmx5", "1235", "white5", 6, 33, false);
+		garage.addVehicle(VehicleP);
+		VehicleP = new Car("6", "bmx6", "1236", "white6", 6, 4, true);
+		garage.addVehicle(VehicleP);
+		VehicleP = new Car("7", "bmx7", "1237", "white7", 6, 4, false);
+		garage.addVehicle(VehicleP);
+		VehicleP = new Car("8", "bmx8", "1238", "white8", 6, 2, true);
+		garage.addVehicle(VehicleP);
+	};
+
+	void init()
+	{                      // starts in the main menu
+		cout << "what is the garage name : ";
+		//cin >> garageName;
+		cin.clear();
+		cin.ignore();
+		getline(cin, garageName);
+
+		cout << "How many parking lots? ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt > 0 && userInputInt <= 100)
+			{
+				garage.set_userSize(userInputInt);
+				system("cls");
+			}
+			else
+			{
+				cout << "Too much, Default size of garage -> 100\n";
+				garage.set_userSize(100);
+			}
+
+		}
+		else
+		{
+			system("cls");
+			cout << "wrong input, Default size of garage -> 100\n";
+			garage.set_userSize(100);
+		}
+
+
+
+		userInputInt = E_MainList;
+		garage.setAllRight();
+		//addTestVehicle();//bara för att prova programmet, använs inte i release läge
+		while (whileToGo)
+		{
+			moveto();
+			system("cls");
+		}
+	};
+
+
+	void getUserInput()       // to know what to run in the program
+	{
+		accepted = false;
+		try
+		{
+			cin >> userInputString;
+			userInputInt = stoi(userInputString);
+			accepted = true;
+		}
+		catch (const std::exception&)
+		{
+			cout << ("something went wrong, only numbers please\n\a");
+			system("pause");
+			accepted = false;
+			userInputInt = E_WrongInput;
+		}
+
+	};
+	//////////////////////////////////////
+	//////////////////////////////////////
+	///////////////Main Meny /////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+
+	void  mainMeny()
+	{
+		garage.numberOfPlacesLeft();
+		cout << "-------------------------------------------------------------------\n"
+			<< "Welcome to the " << garageName << ". What would you like to do?\n"
+			<< "1.Add vehicle\n"
+			<< "2.Show garage(list vehicle)\n"
+			<< "3.Show  all vehicles(ListTypeOfVehicles)\n"
+			<< "4.Show  all vehicles(ListTypeOfVehicles)\"Enhanced way\"\n"
+			<< "5.Show Vehicles by  ... \n"
+			<< "6.Search/Remove vehicle\n"
+			<< "7.Exit\n";
+
+		getUserInput();
+		switch (userInputInt)
+		{
+		case E_AddVeh:
+			userInputInt = E_AddVecList;
+			break;
+		case E_ShowGarage:
+			garage.listVehicles();
+			system("pause");
+			userInputInt = E_MainList;
+			break;
+		case E_showAllVehicle:
+			garage.ListTypeOfVehicles();
+			system("pause");
+			userInputInt = E_MainList;
+			break;
+		case E_showAllVehicleNEW:
+			garage.listTypeOfVecNEW();
+			system("pause");
+			userInputInt = E_MainList;
+			break;
+		case E_showVehicleBy:
+			userInputInt = E_ShowVecList;
+			break;
+		case E_SearchRemovVec:
+			searchAndRemove();
+			userInputInt = E_MainList;
+			break;
+		case E_Exit:
+			whileToGo = false;
+			garage.deletePointerz();/////dont now if it's important or not, for memory's sake
+			break;
+		case E_WrongInput:
+			userInputInt = E_MainList;
+			break;
+		default:
+			cout << "Wrong input, try again.\n";
+			system("pause");
+			userInputInt = E_MainList;
+			break;
+		}
+	};
+
+	//////////////////////////////////////
+	//////////////////////////////////////
+	//////// Add vehicle List ////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+
+	void  addVecile()
+	{
+
+		cout << "What type of vehicle do you want to add?\n"
+			<< "1.Bicycle \n"
+			<< "2.Motorcycle\n"
+			<< "3.Car \n"
+			<< "4.Bus\n"
+			<< "5.Truck\n"
+			<< "0.Main meny\n";
+
+		getUserInput();
+		switch (userInputInt)
+		{
+		case E_MainList:
+			userInputInt = E_MainList;
+			break;
+		case E_Bicycle:
+			addBicycle();
+			userInputInt = E_MainList;
+			break;
+		case E_Motorcycle:
+			addMotorcycle();
+			userInputInt = E_MainList;
+			break;
+		case E_Car:
+			addCar();
+			userInputInt = E_MainList;
+			break;
+		case E_Bus:
+			addBus();
+			userInputInt = E_MainList;
+			break;
+		case E_Truck:
+			addTruck();
+			userInputInt = E_MainList;
+			break;
+		case E_WrongInput:
+			userInputInt = E_AddVecList;
+			break;
+		default:
+			cout << "Wrong input, try again.\n";
+			system("pause");
+			userInputInt = E_AddVecList;
+			break;
+		}
+
+	};
+
+	///////////////////////////////////////////
+	//////////////add bicycle ////////////////
+	//////////////////////////////////////////
+
+	void addBicycle()
+	{
+		cin.ignore();
+		cout << "What is the owner's name?  ";
+		getline(cin, ownerl);
+		cout << "What model is it?  ";
+		cin >> modell;
+
+		cout << "What is the registration number?  ";
+		cin >> regnuml;
+
+		cout << "What color is it?  ";
+		cin >> colorl;
+
+		cout << "How many wheels does your vehicle has?  ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt >= 1 && userInputInt <= 4)
+				numOfwheelsl = userInputInt;
+			else
+			{
+				cout << "You cannot be serious\n";
+				cout << "Default -> \"2\".\n";
+				numOfwheelsl = 2;
+			}
+		}
+		else
+		{
+			cout << "Default -> \"2\".\n";
+			numOfwheelsl = 2;
+		}
+		cout << "Does the bicycle have supporting wheels?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool1 = true;
+		else if (userInputInt == 2)
+			tempBool1 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool1 = false;
+		}
+		cout << "Is the bicycle tandem?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool2 = true;
+		else if (userInputInt == 2)
+			tempBool2 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool2 = false;
+		}
+		VehicleP = new Bicycle(ownerl, modell, regnuml, colorl, numOfwheelsl, tempBool1, tempBool2);
+		garage.addVehicle(VehicleP);
+		system("pause");
+	};
+
+	///////////////////////////////////////////
+	//////////////add motorcycle///////////////
+	//////////////////////////////////////////
+
+	void addMotorcycle()
+	{
+		cin.ignore();
+		cout << "What is the owner's name?  ";
+		getline(cin, ownerl);
+
+		cout << "What model is it?  ";
+		cin >> modell;
+
+		cout << "What is the registration number?  ";
+		cin >> regnuml;
+
+		cout << "What color is it?  ";
+		cin >> colorl;
+
+		cout << "How many wheels does your vehicle have?  ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt >= 2 && userInputInt <= 3)
+				numOfwheelsl = userInputInt;
+			else
+			{
+				cout << "You cannot be serious\n";
+				cout << "Default -> \"2\".\n";
+				numOfwheelsl = 2;
+			}
+		}
+		else
+		{
+			cout << "Default -> \"2\".\n";
+			numOfwheelsl = 2;
+		}
+		cout << "Is there a sidecar?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool1 = true;
+		else if (userInputInt == 2)
+			tempBool1 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool1 = false;
+		}
+		cout << "Is there a windshield?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool2 = true;
+		else if (userInputInt == 2)
+			tempBool2 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool2 = false;
+		}
+		VehicleP = new Motorcycle(ownerl, modell, regnuml, colorl, numOfwheelsl, tempBool1, tempBool2);
+		garage.addVehicle(VehicleP);
+		system("pause");
+	};
+	//////////////////////////////////////
+	///////////add car////////////////////
+	/////////////////////////////////////
+	void addCar()
+	{
+		cin.ignore();
+		cout << "What is the owner's name?  ";
+		getline(cin, ownerl);
+
+		cout << "What model is it?  ";
+		cin >> modell;
+
+		cout << "What is the registration number?  ";
+		cin >> regnuml;
+
+		cout << "What color is it?  ";
+		cin >> colorl;
+
+		cout << "How many wheels does your vehicle have?  ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt >= 3 && userInputInt <= 4)
+				numOfwheelsl = userInputInt;
+			else
+			{
+				cout << "You cannot be serious\n";
+				cout << "Default -> \"4\".\n";
+				numOfwheelsl = 4;
+			}
+		}
+		else
+		{
+			cout << "Default -> \"4\".\n";
+			numOfwheelsl = 4;
+		}
+
+		cout << "How many doors does your vehicle have?  ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt >= 2 && userInputInt <= 4)
+				numofdoorsl = userInputInt;
+			else
+			{
+				cout << "You cannot be serious\n";
+				cout << "Default -> \"4\".\n";
+				numofdoorsl = 4;
+			}
+		}
+		else
+		{
+			cout << "Default -> \"4\".\n";
+			numofdoorsl = 4;
+		}
+
+		cout << "Does your car have a GPS?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool1 = true;
+		else if (userInputInt == 2)
+			tempBool1 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool1 = false;
+		}
+
+		VehicleP = new Car(ownerl, modell, regnuml, colorl, numOfwheelsl, numofdoorsl, tempBool1);
+		garage.addVehicle(VehicleP);
+		system("pause");
+	};
+
+	///////////////////////////////////
+	////////////addbus/////////////////
+	///////////////////////////////////
+	void addBus()
+	{
+		cin.ignore();
+		cout << "What is the owner's name?  ";
+		getline(cin, ownerl);
+
+		cout << "What model is it?  ";
+		cin >> modell;
+
+		cout << "What is the registration number?  ";
+		cin >> regnuml;
+
+		cout << "What color is it?  ";
+		cin >> colorl;
+
+		cout << "How many wheels does your vehicle have?  ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt >= 4 && userInputInt <= 20)
+				numOfwheelsl = userInputInt;
+			else
+			{
+				cout << "You cannot be serious\n";
+				cout << "Default -> \"6\".\n";
+				numOfwheelsl = 6;
+			}
+		}
+		else
+		{
+			cout << "Default -> \"6\".\n";
+			numOfwheelsl = 6;
+		}
+		cout << "How many seats does your vehicle have?  ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt >= 8 && userInputInt <= 89)
+				numofseatsl = userInputInt;
+			else
+			{
+				cout << "You cannot be serious\n";
+				cout << "Default -> \"56\".\n";
+				numofseatsl = 56;
+			}
+		}
+		else
+		{
+			cout << "Default -> \"56 \".\n";
+			numofseatsl = 56;
+		}
+
+		cout << "Is the bus double-decker?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool1 = true;
+		else if (userInputInt == 2)
+			tempBool1 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool1 = false;
+		}
+
+		VehicleP = new Bus(ownerl, modell, regnuml, colorl, numOfwheelsl, numofseatsl, tempBool1);
+		garage.addVehicle(VehicleP);
+		system("pause");
+	};
+
+	//////////////////////////////////////
+	//////////////addtruck////////////////
+	//////////////////////////////////////
+	void addTruck()
+	{
+		cin.ignore();
+		cout << "What is the owner's name?  ";
+		getline(cin, ownerl);
+
+		cout << "What model is it?  ";
+		cin >> modell;
+
+		cout << "What is the registration number?  ";
+		cin >> regnuml;
+
+		cout << "What color is it?  ";
+		cin >> colorl;
+
+		cout << "How many wheels do your vehicle has?  ";
+		getUserInput();
+		if (accepted)
+		{
+			if (userInputInt >= 8 && userInputInt <= 98)
+				numOfwheelsl = userInputInt;
+			else
+			{
+				cout << "You cannot be serious\n";
+				cout << "Default -> \"18\".\n";
+				numOfwheelsl = 18;
+			}
+		}
+		else
+		{
+			cout << "Default -> \"18\".\n";
+			numOfwheelsl = 18;
+		}
+
+
+		cout << "Is the truck loaded?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool1 = true;
+		else if (userInputInt == 2)
+			tempBool1 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool1 = false;
+		}
+		cout << "Does it have a crane?\n1-yes\n2-no\n";
+		getUserInput();
+		if (userInputInt == 1)
+			tempBool2 = true;
+		else if (userInputInt == 2)
+			tempBool2 = false;
+		else
+		{
+			cout << "Default -> \"no\".\n";
+			tempBool2 = false;
+		}
+		VehicleP = new Truck(ownerl, modell, regnuml, colorl, numOfwheelsl, tempBool1, tempBool2);
+		garage.addVehicle(VehicleP);
+		system("pause");
+	};
+
+	//////////////////////////////////////
+	//////////////////////////////////////
+	///////////////find by////////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+
+	void showVecBy() {
+
+		cout << "Show by ...?\n"
+			<< "1.color \n"
+			<< "2.num of whells\n"
+			<< "3.type of vehicle\n"
+			<< "0.main meny\n";
+
+		getUserInput();
+		switch (userInputInt)
+		{
+		case E_MainList:
+			userInputInt = E_MainList;
+			break;
+		case E_color:
+			cout << "What color are you looking for?\n";
+			cin >> MyTempString;
+			garage.listVehicles(E_color, MyTempString);
+			system("pause");
+			userInputInt = E_MainList;
+			break;
+		case E_numOfWheels:
+			cout << "How many wheels are you looking for?\n";
+			getUserInput();
+			if (accepted)
+			{
+				garage.listVehicles(E_numOfWheels, userInputInt);
+				system("pause");
+			}
+			userInputInt = E_MainList;
+			break;
+		case E_typeOfVec:
+			cout << "what type are you looking for?\n"
+				<< "1.Bicycle \n"
+				<< "2.Motorcycle\n"
+				<< "3.Car \n"
+				<< "4.Bus\n"
+				<< "5.Truck\n";
+			getUserInput();
+			if (accepted)
+			{
+				garage.listVehicles(userInputInt);
+				system("pause");
+			}
+			userInputInt = E_MainList;
+			break;
+		case E_WrongInput:
+			userInputInt = E_ShowVecList;
+			break;
+		default:
+			cout << "Wrong input, try again.\n";
+			system("pause");
+			userInputInt = E_ShowVecList;
+			break;
+		}
+	};
+
+
+	//////////////////////////////////////
+	//////////////////////////////////////
+	/////////Search and remove////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+	//////////////////////////////////////
+
+	void searchAndRemove()
+	{
+		cout << "type the reg number you want to search\n";
+		cin >> MyTempString;
+		if (garage.findByRegNum(MyTempString))
+		{
+			cout << "Would you like to remove your vehicle?\n1-yes\n2-no \n";
+			getUserInput();
+			switch (userInputInt)
+			{
+			case E_yes:
+				garage.RemoveVehicle(MyTempString);
+				userInputInt = E_MainList;
+				break;
+			case E_no:
+				userInputInt = E_MainList;
+				break;
+			case E_WrongInput:
+				searchAndRemove();
+				break;
+			default:
+				cout << "Wrong input, try again.\n";
+				searchAndRemove();
+				break;
+
+			}
+		}
+		else
+			cout << "shoud be system line\n";
+		system("pause");
+
+	};
+
+
+
+
+	void moveto()
+	{
+
+		switch (userInputInt)
+		{
+		case E_MainList:
+			mainMeny();
+			break;
+		case E_AddVecList:
+			addVecile();
+			break;
+		case E_ShowVecList:
+			showVecBy();
+			break;
+		default:
+			cout << "Wrong in moveto method \n\n";
+			break;
+		}
+
+	};
+}lista;
+
+
+int main()
+{
+
+
+	lista.init();
+
+	cout << "You finished the program \nthank you for using our program\nfor any feedback contact us\n";
+	system("pause");
+}
